@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  nginx:
+    container_name: soul-nginx
+    build: ./nginx
+    links:
+      - soul:soul
+    ports:
+      - 3000:3000
+    depends_on:
+      - soul
+    restart: unless-stopped
+
+  soul:
+    container_name: soul-app
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - ENVIRONMENT=docker
+    links:
+      - mongo
+    restart: unless-stopped
+
+  mongo:
+    image: mongo
+    container_name: soul-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: souladmin
+      MONGO_INITDB_ROOT_PASSWORD: makeitpopwe123SOUL
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodata:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongodata:
